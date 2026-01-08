@@ -1,7 +1,7 @@
 # LIRT-MI
 Adjusting for longitudinal measurement noninvariance in longitudinal item response theory models: Comparing Bayesian regularization and alignment optimization
 
-By accounting for longitudinal measurement noninvariance in longitudinal item response theory models, we proposed a longitudinal IRT model with time-specific item parameters and additionally incorporated the dependence among the repeated item measurements. Based on the principle of approximate invariance, Bayesian regularization and alignment optimization methods are developed for model estimation.
+By accounting for longitudinal measurement noninvariance in longitudinal item response theory models, we proposed a longitudinal IRT model with time-specific item parameters and additionally incorporated the dependence among the repeated item measurements. Based on the principle of approximate invariance, Bayesian regularization and alignment optimization methods are developed for model estimation.
 
 The Data file folder includes three files. Data-AwC.R implements our alignment optimization procedure for the real data. Data-BR.R implements our Bayesian adaptive Lasso procedure for the real data. fy11.csv is the final data file.
 
