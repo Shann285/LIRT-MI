@@ -13,7 +13,7 @@ N=500       #sample size
 q=2         #latent intercept/slope
 T=4         #time points
 I=8        #items
-CNUM=50
+CNUM=100
 YFILE="Y.txt"
 
 ###true parameter values
@@ -102,7 +102,7 @@ fit_with_aliglgm <- function(n_items, n_waves, dp, lp){
 }
 
 
-## 50 replications
+## 100 replications
 for(CIR in 1:CNUM){
   bt<-proc.time()
   Y<-array(0, dim=c(N, T, I))
@@ -214,52 +214,6 @@ write(cil, file="cilM2.txt", ncol=length(cil), append=TRUE, sep="\t")
 ciu <- parameterEstimates(fit3)$ci.upper[c(44:45, 41:43, 82:113, 1:32, 46 )]
 write(ciu, file="ciuM2.txt", ncol=length(ciu), append=TRUE, sep="\t")
 
-
-pva <- NULL
-
-for(item in 2:I){
-  for(t in 2:T){
-    dptemp <- dp
-    dptemp[t,item] <- dptemp[1,item]
-    fit3t <- sem(fit_with_aliglgm(I,T,dptemp,lp), data = data1, ordered = c("y11","y21","y31","y41","y51","y61","y71","y81","y12","y22","y32","y42","y52","y62","y72","y82",
-          "y13","y23","y33","y43","y53","y63","y73","y83","y14","y24","y34","y44","y54","y64","y74","y84"), parameterization = "theta")
-   
-    Converg <- c(Converg, inspect(fit3t, what = "converged"))
-    resl <- try(lavTestLRT(fit3, fit3t), silent=TRUE)
-    if(length(class(resl)) == 1){
-      pva <- c(pva, 99)
-    }else{
-      pva <- c(pva, resl[2,7])
-    }
-  }
-}
-
-write(pva, file="pva3M2.txt", ncol=length(pva), append=TRUE, sep="\t")
-
-
-pval <- NULL
-
-for(item in 2:I){
-  for(t in 2:T){
-    lptemp <- lp
-    lptemp[t,item] <- lptemp[1,item]
-    fit3t <- sem(fit_with_aliglgm(I,T,dp,lptemp), data = data1, ordered = c("y11","y21","y31","y41","y51","y61","y71","y81","y12","y22","y32","y42","y52","y62","y72","y82",
-          "y13","y23","y33","y43","y53","y63","y73","y83","y14","y24","y34","y44","y54","y64","y74","y84"), parameterization = "theta")
-   
-    Converg <- c(Converg, inspect(fit3t, what = "converged"))
-    resl <- try(lavTestLRT(fit3, fit3t), silent=TRUE)
-    if(length(class(resl)) == 1){
-      pval <- c(pval, 99)
-    }else{
-      pval <- c(pval, resl[2,7])
-    }
-  }
-}
-
-
-write(pval, file="pva31M2.txt", ncol=length(pval), append=TRUE, sep="\t")
-
-
 write(Converg, file="ConvergM2.txt", ncol=length(Converg), append=TRUE, sep="\t")
 
 print(CIR)
@@ -269,49 +223,5 @@ write((et-bt)[3], file="timelavM2.txt", ncol=1, append=TRUE, sep="\t")
 
 }
 
-
-
 date()
 save.image(paste("RAOlaM2",".RData",sep=""))
-
-
-#warnings()
-
-Convergr<- rowSums( read.table("ConvergM2.txt") )   
-
-indcat <- Convergr==(23+21)
-
-
-estres<-matrix(scan("estrM2.txt",nlines=CNUM),nrow=CNUM, byr=T)
-
-
-truepa<-c(0, 0.2, 0.5, 0.1, 0.045, as.vector(A)/1.7, as.vector(L)/1.7, psx)
-
-
-bias1 <- apply(estres[indcat,], MARGIN=2, FUN=mean)-truepa
-
-
-Rmse1 <- colMeans((estres[indcat,] - matrix(rep(truepa, each=length(indcat)), nrow=length(indcat)))^2)
-
-
-#colMeans(cbind(abs(bias1[38:69]), sqrt(Rmse1[38:69])))
-colMeans(cbind(abs(bias1[seq(38,69,4)]), sqrt(Rmse1[seq(38,69,4)]))) ##a1 
-
-colMeans(cbind(abs(bias1[c(39:41,43:45,47,51:53,55:57,59:61,63:65,67:69)]), sqrt(Rmse1[c(39:41,43:45,47,51:53,55:57,59:61,63:65,67:69)]))) ##a2-a4 non-DIF
-
-colMeans(cbind(abs(bias1[c(48,49)]), sqrt(Rmse1[c(48,49)]))) ##a2-a4 DIF
-
-
-#colMeans(cbind(abs(bias1[6:37]), sqrt(Rmse1[6:37])))
-
-colMeans(cbind(abs(bias1[seq(6,37,4)]), sqrt(Rmse1[seq(6,37,4)])))  ## d1
-
-colMeans(cbind(abs(bias1[c(7:9,11:13,15,19:21,23:25,27:29,31:33,35:37)]), sqrt(Rmse1[c(7:9,11:13,15,19:21,23:25,27:29,31:33,35:37)]))) ##d2-d4 non-DIF
-
-colMeans(cbind(abs(bias1[c(16,17)]), sqrt(Rmse1[c(16,17)]))) ##d2-d4 DIF
-
-
-cbind(bias1, sqrt(Rmse1))[c(1:5,70),] ##growth parameters
-
-
-
