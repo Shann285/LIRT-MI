@@ -15,7 +15,7 @@ N=500       #sample size
 q=2         #latent intercept/slope
 T=4         #time points
 I=8        #items
-CNUM=50
+CNUM=100
 YFILE="Y.txt"
 
 ###true parameter values
@@ -133,7 +133,7 @@ model {
 }
 "
 
-## 50 replications
+## 100 replications
 for(CIR in 1:CNUM){
   bt<-proc.time()
   Y<-array(0, dim=c(N, T, I))
