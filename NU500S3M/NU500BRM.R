@@ -15,7 +15,7 @@ N=500       #sample size
 q=2         #latent intercept/slope
 T=4         #time points
 I=8        #items
-CNUM=50
+CNUM=100
 YFILE="Y.txt"
 
 ###true parameter values
@@ -134,7 +134,8 @@ inits = function() {
   return(init.values);
 }
 
-irt_1pl<-stan(model_code = model_code1, pars = c("mua0","Siga","A00","A0","L00","L0"), data=data0, iter=8000, init=inits, chains=3, cores=3)
+irt_1pl<-stan(model_code = model_code1, pars = c("mua0","Siga","A00","A0","L00","L0"), data=data0, iter=10000, init=inits, chains=3, cores=3, 
+              control=list(adapt_delta=0.9,max_treedepth=13))
 
 aa<-summary(irt_1pl, probs = c(0.025, 0.975), pars = c("mua0","Siga","A00","A0","L00","L0"))
 
@@ -155,43 +156,6 @@ write((et-bt)[3], file="timeM.txt", ncol=1, append=TRUE, sep="\t")
 date()
 save.image(paste("RthresM",".RData",sep=""))
 
-
-aR<-matrix(scan("RhhM.txt",nlines=CNUM),nrow=CNUM, byr=T)
-
-ad<-matrix(scan("diverM.txt",nlines=CNUM),nrow=CNUM, byr=T)
-
-aain<-which( (rowSums(aR[,c(1:3,5, 30:61, 86:117)]>1.05)==0) & (ad==0) )
-
-length(aain)/CNUM   ##convergence rate
-
-
-
-amean<-matrix(scan("ameanM.txt",nlines=CNUM),nrow=CNUM, byr=T)
-
-truepa<-c(0.2, 0.5,0.045,0.1, as.vector(t(A)), as.vector(t(L)))
-
-
-bias1 <- apply(amean[aain, c(1:3,5, 30:61, 86:117)], MARGIN=2, FUN=mean)-truepa
-
-
-Rmse1 <- colMeans((amean[aain, c(1:3,5, 30:61, 86:117)] - matrix(rep(truepa, each=length(aain)), nrow=length(aain)))^2)
-
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[(4*I+5):(5*I+4),])) ##a1 
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[c((5*I+5):(6*I+4), (6*I+5),(6*I+6),(6*I+8):(7*I+4), (7*I+5),(7*I+6),(7*I+8):(8*I+4) ),])) ##a2-a4 non-DIF increments
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[c((6*I+7),(7*I+7)),])) ##a2-a4 DIF increments
-
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[5:(I+4),])) ## d1
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[c((I+5):(2*I+4), (2*I+5),(2*I+6),(2*I+8):(3*I+4), (3*I+5),(3*I+6),(3*I+8):(4*I+4) ),])) ##d2-d4 non-DIF increments
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[c((2*I+7),(3*I+7)),])) ##d2-d4 DIF increments
-
-
-cbind(bias1, sqrt(Rmse1))[1:4,] ##growth parameters
 
 
 
