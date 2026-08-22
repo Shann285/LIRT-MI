@@ -180,7 +180,3 @@ write((et-bt)[3], file="time.txt", ncol=1, append=TRUE, sep="\t")
 
 date()
 save.image(paste("Rthres",".RData",sep=""))
-
-
-
-cbind(bias1, sqrt(Rmse1))[1:4,] ##growth parameters
