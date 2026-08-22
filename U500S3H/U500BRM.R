@@ -147,35 +147,3 @@ write((et-bt)[3], file="timeM.txt", ncol=1, append=TRUE, sep="\t")
 
 date()
 save.image(paste("RthresM",".RData",sep=""))
-
-
-
-aR<-matrix(scan("RhhM.txt",nlines=CNUM),nrow=CNUM, byr=T)
-ad<-matrix(scan("diverM.txt",nlines=CNUM),nrow=CNUM, byr=T)
-
-aain<-which( (rowSums(aR[,c(1:3,5, 30:61, 62:69)]>1.05)==0) & (ad==0) )
-
-length(aain)/CNUM  ##convergence rate
-
-
-amean<-matrix(scan("amean.txt",nlines=CNUM),nrow=CNUM, byr=T)
-
-truepa<-c(0.2, 0.5,0.045,0.1, as.vector(t(A)),as.vector(L[1,]))
-
-
-bias1 <- apply(amean[aain, c(1:3,5, 30:61, 62:69)], MARGIN=2, FUN=mean)-truepa
-
-Rmse1 <- colMeans((amean[aain, c(1:3,5, 30:61, 62:69)] - matrix(rep(truepa, each=length(aain)), nrow=length(aain)))^2)
-
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[(4*I+5):(5*I+4),])) ##a1
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[5:(I+4),])) ##d1
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[c((I+5):(2*I+4), (2*I+5),(2*I+6),(2*I+8):(3*I+4), (3*I+5),(3*I+6),(3*I+8):(4*I+4) ),])) ##d2-d4 non-DIF increments
-
-colMeans(abs(cbind(bias1, sqrt(Rmse1))[c((2*I+7),(3*I+7)),])) ##d2-d4 DIF increments
-
-
-cbind(bias1, sqrt(Rmse1))[1:4,] ##growth parameters
-
